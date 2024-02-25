@@ -1,7 +1,7 @@
 // import { OpenAI } from "langchain/llms/openai";
-// import { ChatOpenAI } from "@langchain/openai";
-import { ChatOpenAI } from "langchain/chat_models/openai";
-import { ChatPromptTemplate } from "langchain/prompts";
+import { ChatOpenAI } from "@langchain/openai";
+// import { ChatOpenAI } from "langchain/chat_models/openai";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
 
 // const llm = new OpenAI({
 const llm = new ChatOpenAI({
@@ -23,7 +23,23 @@ export async function getAnswer(question: string) {
 export async function generateAnswer(question: string) {
   let answer = ''
 
-  const systemTemplate = "Take the role of a {role}, that answers questions in a {style} way.";
+  // const systemTemplate = "Take the role of a {role}, that answers questions in a {style} way.";
+  const systemTemplate = `Create an ICS file compatible with Google Calendar using the following structure: "BEGIN:VCALENDAR
+  VERSION:2.0
+  BEGIN:VEVENT
+  SUMMARY:title
+  DTSTART:startDate
+  DTEND:endDate
+  LOCATION:location
+  DESCRIPTION:description
+  END:VEVENT
+  END:VCALENDAR" and Extract event details from the provided article and Make sure to format the date according to this pattern for DTSTART and DTEND:
+
+  javascript
+  Copy code
+  DTSTART:startDate.toISOString().replace(/[-:]/g, "").replace(/."d3"/, "")Z
+  DTEND:endDate.toISOString().replace(/[-:]/g, "").replace(/.d"3"/, "")Z
+  Your task is to generate the ICS file using the provided event details and date formatting instructions.`;
   const humanTemplate = "{text}";
 
   const chatPrompt = ChatPromptTemplate.fromMessages([
@@ -31,9 +47,12 @@ export async function generateAnswer(question: string) {
       ["human", humanTemplate],
   ])
 
+  // const formattedChatPrompt = await chatPrompt.formatMessages({
+  //     role: "personal travel agent",
+  //     style: "detailed",
+  //     text: question
+  // })
   const formattedChatPrompt = await chatPrompt.formatMessages({
-      role: "personal travel agent",
-      style: "detailed",
       text: question
   });
   

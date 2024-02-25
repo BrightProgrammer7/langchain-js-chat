@@ -4,7 +4,7 @@ type MessageProps = {
     message: string,
     timestamp?: string
 }
-
+ 
 export default function Message({ sender, title, message, timestamp = "" }: MessageProps) {
     return (
         <div className="flex items-start gap-2.5 mx-8 mb-4">
